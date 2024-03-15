@@ -1,42 +1,55 @@
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
+import TodoItem from './components/TodoItem';
 
-import React from 'react';
-import { useState } from "react";
-import {StyleSheet,Text,View,FlatList} from 'react-native';
-import InputCard from './components/InputCard'
-import TodoItem from './components/TodoItem'
-
-function App(){
+function App() {
     const [yapilacaklar, setYapilacaklar] = useState([]);
+    const [inputValue, setInputValue] = useState('');
 
-    const ItemRender=({item}) => <TodoItem item={item} />
-    const sayi=yapilacaklar.length
+    const ItemRender = ({ item, index }) => (
+        <TouchableOpacity onPress={() => handleItemPress(index)}>
+            <Text style={item.completed ? styles.completedText : styles.text}>{item.task}</Text>
+        </TouchableOpacity>
+    );
 
-    const handleSearch = (text) => {
-                setYapilacaklar((prevList) => [...prevList, text]);
+    const sayi = yapilacaklar.length;
 
-        };
-     function handleClick(){
-            handleSearch()
+    const handleSearch = () => {
+        if (inputValue.trim() !== '') {
+            setYapilacaklar((prevList) => [...prevList, { task: inputValue, completed: false }]);
+            setInputValue('');
+        }
+    };
 
-     }
+    const handleItemPress = (index) => {
+        setYapilacaklar((prevList) =>
+            prevList.map((item, idx) => (idx === index ? { ...item, completed: !item.completed } : item))
+        );
+    };
 
-    return(
-    <View style={styles.container}>
-        <View>
-            <Text style={styles.text}>Yapilacaklar:   {sayi}</Text>
-        </View>
-        <View style={styles.flat}>
-                <FlatList data={yapilacaklar} renderItem={ItemRender} />
+    return (
+        <View style={styles.container}>
+            <View>
+                <Text style={styles.text}>Yapilacaklar: {sayi}</Text>
             </View>
-        <View style={styles.inputCardContainer}>
-              <InputCard onSearch={handleSearch} click={handleClick}></InputCard>
+            <View style={styles.flat}>
+                <FlatList
+                    data={yapilacaklar}
+                    renderItem={ItemRender}
+                    keyExtractor={(item, index) => index.toString()}
+                />
+            </View>
+            <View style={styles.inputCardContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Yapılacak..."
+                    onChangeText={(text) => setInputValue(text)}
+                    value={inputValue}
+                />
+                <Button title="Ekle" onPress={handleSearch} />
+            </View>
         </View>
-
-    </View>
-
-
-
-    )
+    );
 }
 
 export default App;
@@ -50,14 +63,24 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#102027',
+        padding: 20,
     },
     inputCardContainer: {
-        flex: 1,
-        marginTop: 200,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
-    flat:{
-        flex:1,
-        marginTop:150
-    }
-
+    input: {
+        flex: 1,
+        backgroundColor: '#fff',
+        marginRight: 10,
+        paddingHorizontal: 10,
+    },
+    flat: {
+        flex: 1,
+        marginTop: 20,
+    },
+    completedText: {
+        textDecorationLine: 'line-through',
+        color: 'gray',
+    },
 });

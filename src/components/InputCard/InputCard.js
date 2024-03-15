@@ -6,7 +6,7 @@ const InputCard=(props)=>{
 
         return(
             <View style={styles.card}>
-                <TextInput placeholder='Yapilacak..' onChangeText={props.onSearch} />
+                <TextInput placeholder='Yapilacak..'  />
                 <View style={styles.line} />
                 <View style={styles.child}>
                     <Button style={styles.button} color='#808080' title='Kaydet' onPress={props.click}></Button>
@@ -17,4 +17,4 @@ const InputCard=(props)=>{
         )
 
 }
-export default InputCard;
+export default InputCard
